@@ -14,11 +14,4 @@
 //specific language governing permissions and limitations under the License.
 //**************************************************************************************:
 
-#include <algorithm>
-#include <cctype>
-#include <functional>
-#include <locale>
-#include <regex>
-#include <string>
-
 #endif // BIOGEARS_CMD_UTILS_STRING_HELPER_H

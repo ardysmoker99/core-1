@@ -73,6 +73,7 @@ function(add_howto name)
 
     list(APPEND ${EXAMPLE_NAME}_LIBS
       Biogears::libbiogears
+	  Biogears::libbiogears_common
       ${CMAKE_THREAD_LIBS_INIT}
       Threads::Threads
       howto::common
@@ -81,6 +82,7 @@ function(add_howto name)
     target_link_libraries(${TARGET_NAME} ${${EXAMPLE_NAME}_LIBS} )
     if(TARGET stage_runtime AND ${ROOT_PROJECT_NAME}_STAGE_RUNTIME) 
       add_dependencies(${TARGET_NAME} stage_runtime)
+
     endif()
    
     add_dependencies(howtos ${TARGET_NAME})
