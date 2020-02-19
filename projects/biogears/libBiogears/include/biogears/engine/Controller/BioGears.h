@@ -83,7 +83,7 @@ class SEScalarTime;
 /**
 * @brief Manages and controls execution of all data/systems in %BioGears
 */
-class BIOGEARS_API BioGears : public Loggable, protected LoggerForward {
+class BIOGEARS_API BioGears {
   friend class BioGearsEngineTest;
   friend class BioGearsScenarioExec;
 
@@ -184,6 +184,8 @@ protected:
   void SetupExternalTemperature();
   void SetupInternalTemperature();
 
+  Logger* GetLogger() const;
+
   bool Initialize(const PhysiologyEngineConfiguration* config);
   bool SetupPatient();
 
@@ -236,7 +238,8 @@ protected:
   std::unique_ptr<SEPatient> m_Patient;
 
   // Flag to destroy the logger or not
-  bool myLogger;
+  bool m_logger_self_managed;
+  Logger* m_Logger;
 
 private:
   void SetUp();

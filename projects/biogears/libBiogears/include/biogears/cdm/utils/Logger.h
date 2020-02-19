@@ -36,26 +36,24 @@ public:
   virtual Logger* GetLogger() const;
 
 protected:
+  virtual void Debug(const char* msg, const char* origin = "") const;
   virtual void Debug(const std::string& msg, const std::string& origin = empty) const;
-  virtual void Debug(std::stringstream& msg, const std::string& origin = empty) const;
   virtual void Debug(std::ostream& msg, const std::string& origin = empty) const;
 
+  virtual void Info(const char* msg, const char* origin = "") const;
   virtual void Info(const std::string& msg, const std::string& origin = empty) const;
-  virtual void Info(std::stringstream& msg, const std::string& origin = empty) const;
-  virtual void Info(const std::stringstream& msg, const std::string& origin = empty) const;
   virtual void Info(std::ostream& msg, const std::string& origin = empty) const;
 
+  virtual void Warning(const char* msg, const char* origin = "") const;
   virtual void Warning(const std::string& msg, const std::string& origin = empty) const;
-  virtual void Warning(std::stringstream& msg, const std::string& origin = empty) const;
   virtual void Warning(std::ostream& msg, const std::string& origin = empty) const;
 
   virtual void Error(const char* msg, const char* origin = "") const;
   virtual void Error(const std::string msg, const std::string origin = empty) const;
-  virtual void Error(std::stringstream& msg, const std::string& origin = empty) const;
   virtual void Error(std::ostream& msg, const std::string& origin = empty) const;
 
+  virtual void Fatal(const char* msg, const char* origin = "") const;
   virtual void Fatal(const std::string& msg, const std::string& origin = empty) const;
-  virtual void Fatal(std::stringstream& msg, const std::string& origin = empty) const;
   virtual void Fatal(std::ostream& msg, const std::string& origin = empty) const;
 
   Logger* m_Logger;
@@ -86,7 +84,7 @@ public:
   void FormatMessages(bool format_messages);
 
   void ResetLogFile(const std::string& logFilename = Loggable::empty, const std::string& working_dir = Loggable::empty);
-  void ResetLogFile(const char* logFilename , const char* working_dir = Loggable::empty_cStr);
+  void ResetLogFile(const char* logFilename, const char* working_dir = Loggable::empty_cStr);
 
   void SetLogLevel(log4cpp::Priority::Value priority) const;
   void SetConsoleLogLevel(log4cpp::Priority::Value priority) const;
@@ -106,7 +104,13 @@ public:
   virtual void Error(const std::string& msg, const std::string& origin = Loggable::empty) const;
   virtual void Fatal(const std::string& msg, const std::string& origin = Loggable::empty) const;
 
-  protected:
+  virtual void Debug(std::ostream const& msg, const std::string& origin = Loggable::empty) const;
+  virtual void Info(std::ostream& msg, const std::string& origin = Loggable::empty) const;
+  virtual void Warning(std::ostream& msg, const std::string& origin = Loggable::empty) const;
+  virtual void Error(std::ostream& msg, const std::string& origin = Loggable::empty) const;
+  virtual void Fatal(std::ostream& msg, const std::string& origin = Loggable::empty) const;
+
+protected:
   virtual std::string FormatLogMessage(const std::string& origin, const std::string& msg) const;
 
   LoggerForward* m_Forward;

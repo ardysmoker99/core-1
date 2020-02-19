@@ -75,8 +75,9 @@ void Logger::ResetLogFile(const std::string& logFilename, const std::string& wor
 
     // delete previous log contents if it exists
     FILE* FilePointer = fopen(qulaified_path.c_str(), "wt+");
-    if (FilePointer)
+    if (FilePointer) {
       fclose(FilePointer);
+    }
 
     m_FileAppender = log4cpp::Appender::getAppender(logFilename);
     if (m_FileAppender == nullptr && !logFilename.empty()) {
@@ -156,8 +157,7 @@ std::string Logger::FormatLogMessage(const std::string& msg, const std::string& 
     m_ss.clear();
     if (m_time != nullptr && m_time->IsValid()) {
       m_ss << "[" << *m_time << "] " << msg;
-    }
-    else {
+    } else {
       m_ss << msg;
     }
     if (msg.empty()) {
@@ -171,7 +171,7 @@ std::string Logger::FormatLogMessage(const std::string& msg, const std::string& 
 void Logger::Debug(const std::string& msg, const std::string& origin) const
 {
   m_Log->debug(FormatLogMessage(msg, origin));
-  
+
   if (m_Forward != nullptr) {
     m_Forward->ForwardDebug(m_ss.str().c_str(), origin.c_str());
   }
@@ -188,7 +188,7 @@ void Logger::Info(const std::string& msg, const std::string& origin) const
 void Logger::Warning(const std::string& msg, const std::string& origin) const
 {
   m_Log->warn(FormatLogMessage(msg, origin));
-  
+
   if (m_Forward != nullptr) {
     m_Forward->ForwardWarning(m_ss.str().c_str(), origin.c_str());
   }
@@ -196,7 +196,7 @@ void Logger::Warning(const std::string& msg, const std::string& origin) const
 void Logger::Error(const std::string& msg, const std::string& origin) const
 {
   m_Log->error(FormatLogMessage(msg, origin));
- 
+
   if (m_Forward != nullptr) {
     m_Forward->ForwardError(m_ss.str().c_str(), origin.c_str());
   }
@@ -204,10 +204,41 @@ void Logger::Error(const std::string& msg, const std::string& origin) const
 void Logger::Fatal(const std::string& msg, const std::string& origin) const
 {
   m_Log->fatal(FormatLogMessage(msg, origin));
-  
+
   if (m_Forward != nullptr) {
     m_Forward->ForwardFatal(m_ss.str().c_str(), origin.c_str());
   }
+}
+
+void Logger::Debug(std::ostream& msg, const std::string& origin = Loggable::empty) const
+{
+  std::stringstream ss;
+  ss << msg.rdbuf();
+  Debug(ss.str(), origin);
+}
+void Logger::Info(std::ostream& msg, const std::string& origin = Loggable::empty) const
+{
+  std::stringstream ss;
+  ss << msg.rdbuf();
+  Info(ss.str(), origin);
+}
+void Logger::Warning(std::ostream& msg, const std::string& origin = Loggable::empty) const
+{
+  std::stringstream ss;
+  ss << msg.rdbuf();
+  Warning(ss.str(), origin);
+}
+void Logger::Error(std::ostream& msg, const std::string& origin = Loggable::empty) const
+{
+  std::stringstream ss;
+  ss << msg.rdbuf();
+  Error(ss.str(), origin);
+}
+void Logger::Fatal(std::ostream& msg, const std::string& origin = Loggable::empty) const
+{
+  std::stringstream ss;
+  ss << msg.rdbuf();
+  Fatal(ss.str(), origin);
 }
 
 void Loggable::Error(const char* msg, const char* origin) const
@@ -216,16 +247,12 @@ void Loggable::Error(const char* msg, const char* origin) const
 }
 void Loggable::Error(const std::string msg, const std::string origin) const
 {
-  if (m_Logger)
+  if (m_Logger) {
     m_Logger->Error(msg, origin);
-  else // if(stdOut) TODO support
+  } else {
+    // if(stdOut) TODO support
     std::cerr << "ERROR:" << msg << " : " << origin << std::endl;
-}
-void Loggable::Error(std::stringstream& msg, const std::string& origin) const
-{
-  Error(msg.str(), origin);
-  msg.str("");
-  msg.clear();
+  }
 }
 void Loggable::Error(std::ostream& msg, const std::string& origin) const
 {
@@ -234,22 +261,18 @@ void Loggable::Error(std::ostream& msg, const std::string& origin) const
   Error(ss.str(), origin);
 }
 
+void Loggable::Info(const char* msg, const char* origin) const
+{
+  Error(std::string{ msg }, std::string{ origin });
+}
 void Loggable::Info(const std::string& msg, const std::string& origin) const
 {
-  if (m_Logger)
+  if (m_Logger) {
     m_Logger->Info(msg, origin);
-  else // if(stdOut) TODO support
+  } else {
+    // if(stdOut) TODO support
     std::cout << "INFO:" << msg << " : " << origin << std::endl;
-}
-void Loggable::Info(std::stringstream& msg, const std::string& origin) const
-{
-  Info(msg.str(), origin);
-  msg.str("");
-  msg.clear();
-}
-void Loggable::Info(const std::stringstream& msg, const std::string& origin) const
-{
-  Info(msg.str(), origin);
+  }
 }
 void Loggable::Info(std::ostream& msg, const std::string& origin) const
 {
@@ -258,18 +281,18 @@ void Loggable::Info(std::ostream& msg, const std::string& origin) const
   Info(ss.str(), origin);
 }
 
+void Loggable::Warning(const char* msg, const char* origin) const
+{
+  Error(std::string{ msg }, std::string{ origin });
+}
 void Loggable::Warning(const std::string& msg, const std::string& origin) const
 {
-  if (m_Logger)
+  if (m_Logger) {
     m_Logger->Warning(msg, origin);
-  else // if(stdOut) TODO support
+  } else {
+    // if(stdOut) TODO support
     std::cout << "WARN:" << msg << " : " << origin << std::endl;
-}
-void Loggable::Warning(std::stringstream& msg, const std::string& origin) const
-{
-  Warning(msg.str(), origin);
-  msg.str("");
-  msg.clear();
+  }
 }
 void Loggable::Warning(std::ostream& msg, const std::string& origin) const
 {
@@ -278,19 +301,19 @@ void Loggable::Warning(std::ostream& msg, const std::string& origin) const
   Warning(ss.str(), origin);
 }
 
+void Loggable::Fatal(const char* msg, const char* origin) const
+{
+  Error(std::string{ msg }, std::string{ origin });
+}
 void Loggable::Fatal(const std::string& msg, const std::string& origin) const
 {
   std::cerr << "FATAL:" << msg << " : " << origin << std::endl;
-  if (m_Logger)
+  if (m_Logger) {
     m_Logger->Fatal(msg, origin);
-  else // if(stdOut) TODO support
+  } else {
+    // if(stdOut) TODO support
     std::cerr << "FATAL:" << msg << " : " << origin << std::endl;
-}
-void Loggable::Fatal(std::stringstream& msg, const std::string& origin) const
-{
-  Fatal(msg.str(), origin);
-  msg.str("");
-  msg.clear();
+  }
 }
 void Loggable::Fatal(std::ostream& msg, const std::string& origin) const
 {
@@ -299,19 +322,18 @@ void Loggable::Fatal(std::ostream& msg, const std::string& origin) const
   Fatal(ss.str(), origin);
 }
 
+void Loggable::Debug(const char* msg, const char* origin) const
+{
+  Error(std::string{ msg }, std::string{ origin });
+}
 void Loggable::Debug(const std::string& msg, const std::string& origin) const
 {
-  if (m_Logger)
+  if (m_Logger) {
     m_Logger->Debug(msg, origin);
+  }
   // Not writing out DEBUG to console, only to log
   // else// if(stdOut) TODO support
   //  std::cout<<"DEBUG:"<<msg<<" : "<<origin<<std::endl;
-}
-void Loggable::Debug(std::stringstream& msg, const std::string& origin) const
-{
-  Debug(msg.str(), origin);
-  msg.str("");
-  msg.clear();
 }
 void Loggable::Debug(std::ostream& msg, const std::string& origin) const
 {
@@ -319,7 +341,6 @@ void Loggable::Debug(std::ostream& msg, const std::string& origin) const
   ss << msg.rdbuf();
   Debug(ss.str(), origin);
 }
-
 
 Loggable::Loggable() { m_Logger = nullptr; }
 Loggable::Loggable(Logger* logger) { m_Logger = logger; }
