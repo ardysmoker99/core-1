@@ -413,8 +413,8 @@ bool SEPatientActionCollection::ProcessAction(const CDM::PatientActionData& acti
     }
     m_Infection->Load(*infect);
     if (!m_Infection->IsActive()) {
-      RemoveInfection();
-      return true;
+      m_Logger->Warning("Manual Eliminaton of Infection currently not supported.");
+      return false;
     }
     return IsValid(*m_Infection);
   }
