@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include "string-helpers.h"
 
 #include <biogears/string/manipulation.h>
 
