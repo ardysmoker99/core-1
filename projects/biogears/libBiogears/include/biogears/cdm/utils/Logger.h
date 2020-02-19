@@ -98,17 +98,17 @@ public:
   virtual void SetForward(LoggerForward* forward);
   virtual bool HasForward();
 
-  virtual void Debug(const std::string& msg, const std::string& origin = Loggable::empty) const;
-  virtual void Info(const std::string& msg, const std::string& origin = Loggable::empty) const;
-  virtual void Warning(const std::string& msg, const std::string& origin = Loggable::empty) const;
-  virtual void Error(const std::string& msg, const std::string& origin = Loggable::empty) const;
-  virtual void Fatal(const std::string& msg, const std::string& origin = Loggable::empty) const;
+  virtual void Debug(const std::string& msg, std::string const& origin = Loggable::empty) const;
+  virtual void Info(const std::string& msg, std::string const& origin = Loggable::empty) const;
+  virtual void Warning(const std::string& msg, std::string const& origin = Loggable::empty) const;
+  virtual void Error(const std::string& msg, std::string const& origin = Loggable::empty) const;
+  virtual void Fatal(const std::string& msg, std::string const& origin = Loggable::empty) const;
 
-  virtual void Debug(std::ostream const& msg, const std::string& origin = Loggable::empty) const;
-  virtual void Info(std::ostream& msg, const std::string& origin = Loggable::empty) const;
-  virtual void Warning(std::ostream& msg, const std::string& origin = Loggable::empty) const;
-  virtual void Error(std::ostream& msg, const std::string& origin = Loggable::empty) const;
-  virtual void Fatal(std::ostream& msg, const std::string& origin = Loggable::empty) const;
+  virtual void Debug(std::ostream const& msg, std::string const& origin = Loggable::empty) const;
+  virtual void Info(std::ostream const& msg, std::string const& origin = Loggable::empty) const;
+  virtual void Warning(std::ostream const& msg, std::string const& origin = Loggable::empty) const;
+  virtual void Error(std::ostream const& msg, std::string const& origin = Loggable::empty) const;
+  virtual void Fatal(std::ostream const& msg, std::string const& origin = Loggable::empty) const;
 
 protected:
   virtual std::string FormatLogMessage(const std::string& origin, const std::string& msg) const;

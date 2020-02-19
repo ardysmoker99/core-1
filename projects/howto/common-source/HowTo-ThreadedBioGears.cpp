@@ -133,7 +133,7 @@ void BioGearsThread::Status()
   m_mutex.lock();
   m_bg->GetLogger()->Info("");
   std::stringstream ss;
-  ss < < < < "Simulation Time : " << m_bg->GetSimulationTime(TimeUnit::s) << "s";
+  ss << "Simulation Time : " << m_bg->GetSimulationTime(TimeUnit::s) << "s";
   m_bg->GetLogger()->Info(ss.str());
   ss.str("");
   ss << "Cardiac Output : " << m_bg->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min;

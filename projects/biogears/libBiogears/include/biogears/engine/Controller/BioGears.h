@@ -171,6 +171,7 @@ public:
   void SetIntubation(CDM::enumOnOff::value s);
   void SetAirwayMode(CDM::enumBioGearsAirwayMode::value mode);
 
+  Logger* GetLogger() const;
 protected:
   void SetupCardiovascular();
   void SetupCerebral();
@@ -184,7 +185,6 @@ protected:
   void SetupExternalTemperature();
   void SetupInternalTemperature();
 
-  Logger* GetLogger() const;
 
   bool Initialize(const PhysiologyEngineConfiguration* config);
   bool SetupPatient();

@@ -210,31 +210,31 @@ void Logger::Fatal(const std::string& msg, const std::string& origin) const
   }
 }
 
-void Logger::Debug(std::ostream& msg, const std::string& origin = Loggable::empty) const
+void Logger::Debug(std::ostream const& msg, const std::string& origin) const
 {
   std::stringstream ss;
   ss << msg.rdbuf();
   Debug(ss.str(), origin);
 }
-void Logger::Info(std::ostream& msg, const std::string& origin = Loggable::empty) const
+void Logger::Info(std::ostream const& msg, const std::string& origin) const
 {
   std::stringstream ss;
   ss << msg.rdbuf();
   Info(ss.str(), origin);
 }
-void Logger::Warning(std::ostream& msg, const std::string& origin = Loggable::empty) const
+void Logger::Warning(std::ostream const& msg, const std::string& origin) const
 {
   std::stringstream ss;
   ss << msg.rdbuf();
   Warning(ss.str(), origin);
 }
-void Logger::Error(std::ostream& msg, const std::string& origin = Loggable::empty) const
+void Logger::Error(std::ostream const& msg, const std::string& origin) const
 {
   std::stringstream ss;
   ss << msg.rdbuf();
   Error(ss.str(), origin);
 }
-void Logger::Fatal(std::ostream& msg, const std::string& origin = Loggable::empty) const
+void Logger::Fatal(std::ostream const& msg, const std::string& origin) const
 {
   std::stringstream ss;
   ss << msg.rdbuf();
