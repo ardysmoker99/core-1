@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+#include <iterator>
 
 #include <biogears/string/manipulation.h>
 
@@ -147,6 +148,12 @@ bool Arguments::parse(const std::vector<std::string>& args)
         return false;
       }
     }
+    std::cerr << "Unknown argument " << arg << " in ";
+    std::stringstream stream;
+    std::copy(args.begin(), args.end() - 1,
+              std::ostream_iterator<std::string>(stream, " "));
+    stream << args.back(); 
+    std::cerr << stream.str() << ".\n";
     return false;
   }
   return true;
