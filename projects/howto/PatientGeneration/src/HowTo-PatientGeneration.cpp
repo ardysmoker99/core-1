@@ -199,7 +199,8 @@ bool HowToPatientGeneration(std::string name, int severity, double mic_g_per_l, 
           tracker.AdvanceModelTime(to_seconds(time_remaining));
           applying_antibiotics = true;
         } else {
-          //Not Applying Antibiotics and over an hour until the next appli          tracker.AdvanceModelTime(to_seconds(hours(1)));
+          //Not Applying Antibiotics and over an hour until the next application
+          tracker.AdvanceModelTime(to_seconds(hours(1)));
           time_since_antibiotic_treatment_min += hours(1);
           time_since_feeding_min += hours(1);
         }
