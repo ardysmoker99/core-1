@@ -158,9 +158,9 @@ bool HowToPatientGeneration(std::string name, int severity, double mic_g_per_l, 
       //meal.GetNutrition().GetFatDigestionRate().MassUnit::g(50, VolumeUnit::mL);
       //meal.GetNutrition().GetProteinDigestionRate().SetValue(50, VolumeUnit::mL);
       bg->ProcessAction(meal);
-    }     if (first_treatment_occured) {
+    }
 
-    } else {
+    if (!first_treatment_occured) {
       if (apply_at_m < current_time) {
         bg->ProcessAction(full_antibiotics_bag);
         first_treatment_occured = true;
