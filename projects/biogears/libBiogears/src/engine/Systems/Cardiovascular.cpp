@@ -1158,12 +1158,7 @@ void Cardiovascular::Hemorrhage()
     }
 
     if (!targetHemorrhage->HasBleedResistance()) {
-      //Aorta needs to be scaled down a bit to match user specified bleed rate
-      if (targetHemorrhage->GetCompartment() == "Aorta") {
-        targetHemorrhage->GetBleedResistance().SetValue((locationPressure_mmHg / bleedRate_mL_Per_s) * 1.25, FlowResistanceUnit::mmHg_s_Per_mL);
-      } else {
-        targetHemorrhage->GetBleedResistance().SetValue((locationPressure_mmHg / bleedRate_mL_Per_s), FlowResistanceUnit::mmHg_s_Per_mL);
-      }
+      targetHemorrhage->GetBleedResistance().SetValue((locationPressure_mmHg / bleedRate_mL_Per_s), FlowResistanceUnit::mmHg_s_Per_mL);
     }
 
     resistance = targetHemorrhage->GetBleedResistance().GetValue(FlowResistanceUnit::mmHg_s_Per_mL);
@@ -2004,7 +1999,7 @@ void Cardiovascular::AdjustVascularTone()
   }
   if (m_data.GetNervous().HasResistanceScaleMyocardium()) {
     ResistanceScale = m_data.GetNervous().GetResistanceScaleMyocardium().GetValue();
-    for (SEFluidCircuitPath* mPath : m_muscleResistancePaths) {
+    for (SEFluidCircuitPath* mPath : m_myocardiumResistancePaths) {
       UpdatedResistance_mmHg_s_Per_mL = mPath->GetResistanceBaseline(FlowResistanceUnit::mmHg_s_Per_mL);
       UpdatedResistance_mmHg_s_Per_mL *= ResistanceScale;
       if (UpdatedResistance_mmHg_s_Per_mL < m_minIndividialSystemicResistance__mmHg_s_Per_mL) {
@@ -2026,10 +2021,11 @@ void Cardiovascular::AdjustVascularTone()
   }
 
   if (m_data.GetNervous().HasComplianceScale()) {
-    for (SEFluidCircuitPath* Path : m_systemicCompliancePaths) {
-      UpdatedCompliance_mL_Per_mmHg = m_data.GetNervous().GetComplianceScale().GetValue() * Path->GetComplianceBaseline(FlowComplianceUnit::mL_Per_mmHg);
-      Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, FlowComplianceUnit::mL_Per_mmHg);
-    }
+    //for (SEFluidCircuitPath* Path : m_systemicCompliancePaths) {
+    SEFluidCircuitPath* Path = m_CirculatoryCircuit->GetPath(BGE::CardiovascularPath::VenaCavaToGround);
+    UpdatedCompliance_mL_Per_mmHg = m_data.GetNervous().GetComplianceScale().GetValue() * Path->GetComplianceBaseline(FlowComplianceUnit::mL_Per_mmHg);
+    Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, FlowComplianceUnit::mL_Per_mmHg);
+    //}
   }
 
   //The drug response adjusts the systemic resistances according to the mean arterial pressure change calculated in Drugs.cpp
