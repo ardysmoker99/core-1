@@ -1645,14 +1645,13 @@ void Cardiovascular::MetabolicToneResponse()
   double coreTempLow_degC = m_data.GetConfiguration().GetCoreTemperatureLow(TemperatureUnit::C); //36.8 degC
   /// \cite talebipour2006sauna
   double tempMultiplier = 1.0 - 0.4 * std::min(coreTempDelta_degC, 1.0); //Approximate 40% reduction in peripheral resistance due to core temperature rise of 1 degree.
-  double metabolicModifier = 1.0;
-  //The metabolic multiplier is used as a tuned response to represent cardiovascular resistance effects during exercise
+  double exerciseModifier = 1.0;
+  //The metabolic modifier is used as a tuned response to represent cardiovascular resistance effects during exercise
   double sp0 = 1.5;
   double divisor = 7.0;
-  double metabolicMultiplier = 1.0;
   if (m_data.GetActions().GetPatientActions().HasExercise()) {
     //Only change this value if exercise is active (per comment above) -- otherwise this modifier can increase during hypothermia, causing incorrect decease in peripheral resistance
-    metabolicModifier = (sp0 * metabolicFraction + (divisor - sp0)) / divisor;
+    exerciseModifier = (sp0 * metabolicFraction + (divisor - sp0)) / divisor;
   }
 
   // Max delta approx. 20% of baseline \cite christie1997cardiac \cite foster1999left
@@ -1663,24 +1662,26 @@ void Cardiovascular::MetabolicToneResponse()
   double resistanceNew__mmHg_s_Per_mL = 0.0;
   double complianceNew_mL_Per_mmHg = 0.0;
 
-  for (SEFluidCircuitPath* Path : m_systemicResistancePaths) {
-    if (Path->HasResistanceBaseline()) {
-      if (Path == m_pAortaToMuscle || Path == m_pMuscleToVenaCava) { // Biggest change in muscle
-        resistanceNew__mmHg_s_Per_mL = (1.0 / metabolicModifier) * (1.0 / metabolicModifier) * Path->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
-      } else if (Path == m_pAortaToBrain || Path == m_pAortaToMyocardium || Path == m_pBrainToVenaCava || Path == m_pMyocardiumToVenaCava) { // No Change in the brain or myocardium
-        resistanceNew__mmHg_s_Per_mL = Path->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
-      } else { // Smaller change in the rest of the tissue paths
-        resistanceNew__mmHg_s_Per_mL = (1.0 / metabolicModifier) * Path->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
-      }
-
-      // Overall reduction in flow resistance in all paths to allow for increased cardiac output with a metabolic rate increase
-      /// \todo Skip over Brain and Myocardium and add arms and legs
-      resistanceNew__mmHg_s_Per_mL *= (1.0 / metabolicMultiplier);
-      if (resistanceNew__mmHg_s_Per_mL < m_minIndividialSystemicResistance__mmHg_s_Per_mL) {
-        resistanceNew__mmHg_s_Per_mL = m_minIndividialSystemicResistance__mmHg_s_Per_mL;
-      }
-      Path->GetNextResistance().SetValue(resistanceNew__mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
+  for (SEFluidCircuitPath* musclePath : m_muscleResistancePaths) {
+    resistanceNew__mmHg_s_Per_mL = (1.0 / exerciseModifier) * (1.0 / exerciseModifier) * musclePath->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
+    if (resistanceNew__mmHg_s_Per_mL < m_minIndividialSystemicResistance__mmHg_s_Per_mL) {
+      resistanceNew__mmHg_s_Per_mL = m_minIndividialSystemicResistance__mmHg_s_Per_mL;
     }
+    musclePath->GetNextResistance().SetValue(resistanceNew__mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
+  }
+  for (SEFluidCircuitPath* extrasplanchnicPath : m_extrasplanchnicResistancePaths) {
+    resistanceNew__mmHg_s_Per_mL = (1.0 / exerciseModifier) * extrasplanchnicPath->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
+    if (resistanceNew__mmHg_s_Per_mL < m_minIndividialSystemicResistance__mmHg_s_Per_mL) {
+      resistanceNew__mmHg_s_Per_mL = m_minIndividialSystemicResistance__mmHg_s_Per_mL;
+    }
+    extrasplanchnicPath->GetNextResistance().SetValue(resistanceNew__mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
+  }
+  for (SEFluidCircuitPath* splanchnicPath : m_splanchnicResistancePaths) {
+    resistanceNew__mmHg_s_Per_mL = (1.0 / exerciseModifier) * splanchnicPath->GetNextResistance(FlowResistanceUnit::mmHg_s_Per_mL);
+    if (resistanceNew__mmHg_s_Per_mL < m_minIndividialSystemicResistance__mmHg_s_Per_mL) {
+      resistanceNew__mmHg_s_Per_mL = m_minIndividialSystemicResistance__mmHg_s_Per_mL;
+    }
+    splanchnicPath->GetNextResistance().SetValue(resistanceNew__mmHg_s_Per_mL, FlowResistanceUnit::mmHg_s_Per_mL);
   }
 }
 
