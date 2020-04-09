@@ -2038,7 +2038,7 @@ void Cardiovascular::AdjustVascularTone()
   //The drug response adjusts the systemic resistances according to the mean arterial pressure change calculated in Drugs.cpp
   double ResistanceChange = 0.0;
   if (m_data.GetDrugs().HasMeanBloodPressureChange()) {
-    double TuningParameter = 3.0;
+    double TuningParameter = 5.0;
     double CardiacOutput_mL_Per_s = GetCardiacOutput(VolumePerTimeUnit::mL_Per_s);
     if (CardiacOutput_mL_Per_s != 0.0)
       ResistanceChange = m_data.GetDrugs().GetMeanBloodPressureChange(PressureUnit::mmHg) / GetCardiacOutput(VolumePerTimeUnit::mL_Per_s);
