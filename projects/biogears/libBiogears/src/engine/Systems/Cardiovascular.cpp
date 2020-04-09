@@ -1633,7 +1633,11 @@ void Cardiovascular::MetabolicToneResponse()
     metabolicFraction = TMR_kcal_Per_day / m_patient->GetBasalMetabolicRate(PowerUnit::kcal_Per_day);
   }
 
-  if (metabolicFraction == 1.0)
+  //We skip this functionality when we are at basal conditions or there is a burn present.  Burns cause hypothermia,
+  //but that should be accompanied by an increase in systemic resistance.  The code below is more applicable to exercise
+  //conditions (in which systemic resistance decreases) and as such causes poor behavior when modeling burns.  Future work
+  //should address the difference between metabolic disturbances caused by exercise and those caused by hypothermia.
+  if (metabolicFraction == 1.0 || m_data.GetActions().GetPatientActions().HasBurnWound())
     return;
 
   double coreTemp_degC = m_data.GetEnergy().GetCoreTemperature(TemperatureUnit::C); //Resting: 37.0 degC
@@ -1649,13 +1653,14 @@ void Cardiovascular::MetabolicToneResponse()
   //The metabolic modifier is used as a tuned response to represent cardiovascular resistance effects during exercise
   double sp0 = 1.5;
   double divisor = 7.0;
+
   if (m_data.GetActions().GetPatientActions().HasExercise()) {
     //Only change this value if exercise is active (per comment above) -- otherwise this modifier can increase during hypothermia, causing incorrect decease in peripheral resistance
     exerciseModifier = (sp0 * metabolicFraction + (divisor - sp0)) / divisor;
-    // Max delta approx. 20% of baseline \cite christie1997cardiac \cite foster1999left
-    double metabolicRateMeanArterialPressureDelta_mmHg = (0.05 * metabolicFraction - 0.05) * m_data.GetPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
-    m_data.GetEnergy().GetExerciseMeanArterialPressureDelta().SetValue(metabolicRateMeanArterialPressureDelta_mmHg, PressureUnit::mmHg);
   }
+  // Max delta approx. 20% of baseline \cite christie1997cardiac \cite foster1999left
+  double metabolicRateMeanArterialPressureDelta_mmHg = (0.05 * metabolicFraction - 0.05) * m_data.GetPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+  m_data.GetEnergy().GetExerciseMeanArterialPressureDelta().SetValue(metabolicRateMeanArterialPressureDelta_mmHg, PressureUnit::mmHg);
 
   //Reducing resistances scaling with metabolic rate increase and changes in core temperature
   double resistanceNew__mmHg_s_Per_mL = 0.0;
